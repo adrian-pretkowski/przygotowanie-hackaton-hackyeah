@@ -1,0 +1,11 @@
+Obraz ma wymiary {{width}} x {{height}} px.
+
+Pytanie użytkownika: „{{question}}”
+
+Zadanie:
+1. Rozpoznaj, co jest na obrazie (deviceType).
+2. Ustal, jaki jest NASTĘPNY krok potrzebny do odpowiedzi na pytanie, i opisz go w polu answer.
+3. Wskaż element, którego dotyczy ten krok (target). Współrzędne bbox podaj w skali 0-1000:
+   x i w liczone względem szerokości obrazu, y i h względem wysokości; punkt (0,0) to lewy górny róg.
+   Ramka ma ciasno obejmować element (przycisk, pole tekstowe, pokrętło, naklejkę), a nie całe urządzenie.
+4. Jeśli na obrazie jest czytelny tekst istotny dla zadania (adres strony, nazwa sieci, hasło), przepisz go dokładnie do extractedText.

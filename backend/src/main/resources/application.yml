@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: pokaz-zapytaj
+  config:
+    # Local secrets from backend/.env (not in git). Template: backend/.env.example
+    # Two paths: started from backend/ (mvnw) or from the repo root (IntelliJ default).
+    import:
+      - optional:file:.env[.properties]
+      - optional:file:backend/.env[.properties]
+  servlet:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 30MB
+
+server:
+  port: 8080
+
+anthropic:
+  # From backend/.env or an environment variable. Empty = the SDK looks up ANTHROPIC_API_KEY in the environment.
+  api-key: ${ANTHROPIC_API_KEY:}
+
+vision:
+  # Model under test. For comparison (H1/H4) switch e.g. to claude-sonnet-5-5 or claude-haiku-4-5.
+  model: ${VISION_MODEL:claude-opus-5-5}
+  # low | medium | high | xhigh | max. Empty = model default. Claude Haiku 4.5 does not support effort: leave empty.
+  effort: ${VISION_EFFORT:low}
+  max-tokens: 4000
+  # Longer image side after scaling (px). Larger = potentially more accurate, but slower and more expensive.
+  max-image-side: 1568
+  jpeg-quality: 0.8
+  # Server-side fallback on refusal (stop_reason=refusal). Works with claude-opus-5-5 / claude-fable-5-1 / claude-sonnet-5-5.
+  # Set to false for claude-haiku-4-5.
+  refusal-fallback: ${VISION_REFUSAL_FALLBACK:true}
+
+logging:
+  level:
+    pl.hackyeah.pokazzapytaj: DEBUG

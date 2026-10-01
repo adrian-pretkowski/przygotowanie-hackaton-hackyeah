@@ -1,0 +1,166 @@
+:host {
+  display: block;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+header h1 {
+  margin: 0 0 12px;
+  font-size: 1.6rem;
+
+  small {
+    font-size: 0.9rem;
+    font-weight: normal;
+    color: var(--muted);
+  }
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+
+  button.active {
+    background: var(--accent);
+    color: #111;
+    border-color: var(--accent);
+  }
+}
+
+main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+
+  @media (min-width: 900px) {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+
+    .result,
+    .stats {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-weight: 600;
+  }
+
+  input[type='text'] {
+    font-size: 1.1rem;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: inherit;
+  }
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.slots {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.slot {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  img,
+  .empty {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: contain;
+    background: #111;
+    border-radius: 8px;
+  }
+
+  .empty {
+    display: grid;
+    place-content: center;
+    color: #888;
+  }
+}
+
+.status {
+  margin: 0;
+  font-weight: 600;
+
+  &.error {
+    color: var(--danger);
+  }
+}
+
+.result {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.answer {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 8px 0 0;
+
+  &.ok {
+    color: var(--ok);
+  }
+
+  &.not-ok {
+    color: var(--danger);
+  }
+}
+
+.warning {
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--warning-bg);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 12px;
+  margin: 0;
+
+  dt {
+    color: var(--muted);
+  }
+
+  dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+.metrics,
+.stats {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+pre {
+  overflow-x: auto;
+  font-size: 0.8rem;
+  background: var(--surface);
+  padding: 8px;
+  border-radius: 8px;
+}

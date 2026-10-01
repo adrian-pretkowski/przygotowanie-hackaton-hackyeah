@@ -1,0 +1,8 @@
+# Local secrets - template in backend/.env.example
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/

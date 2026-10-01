@@ -1,0 +1,117 @@
+<header>
+  <h1>Pokaż i zapytaj <small>demo rozpoznawania obrazu</small></h1>
+  <nav class="tabs">
+    <button type="button" [class.active]="mode() === 'locate'" (click)="setMode('locate')">Gdzie kliknąć?</button>
+    <button type="button" [class.active]="mode() === 'compare'" (click)="setMode('compare')">Czy krok wykonany?</button>
+  </nav>
+</header>
+
+<main>
+  <section class="camera">
+    <app-camera />
+  </section>
+
+  <section class="panel">
+    @if (mode() === 'locate') {
+      <label>
+        Pytanie
+        <input type="text" [value]="question()" (input)="question.set($any($event.target).value)" />
+      </label>
+      <div class="actions">
+        <button type="button" class="primary" [disabled]="loading()" (click)="captureAndAsk()">Zrób zdjęcie i zapytaj</button>
+        <label class="button">
+          Wgraj zdjęcie
+          <input type="file" accept="image/*" hidden [disabled]="loading()" (change)="uploadAndAsk($event)" />
+        </label>
+      </div>
+    } @else {
+      <label>
+        Oczekiwany krok
+        <input type="text" [value]="expectedStep()" (input)="expectedStep.set($any($event.target).value)" />
+      </label>
+      <div class="slots">
+        @for (slot of ['before', 'after']; track slot) {
+          <div class="slot">
+            <strong>{{ slot === 'before' ? 'PRZED' : 'PO' }}</strong>
+            @if (previewUrl($any(slot)); as url) {
+              <img [src]="url" alt="" />
+            } @else {
+              <div class="empty">brak zdjęcia</div>
+            }
+            <div class="actions">
+              <button type="button" (click)="captureSlot($any(slot))">Z kamery</button>
+              <label class="button">
+                Z pliku
+                <input type="file" accept="image/*" hidden (change)="uploadSlot($any(slot), $event)" />
+              </label>
+            </div>
+          </div>
+        }
+      </div>
+      <button type="button" class="primary" [disabled]="loading()" (click)="checkStep()">Sprawdź krok</button>
+    }
+
+    @if (loading()) {
+      <p class="status">Analizuję obraz…</p>
+    }
+    @if (error()) {
+      <p class="status error">{{ error() }}</p>
+    }
+  </section>
+
+  @if (mode() === 'locate' && frame(); as frame) {
+    <section class="result">
+      <app-annotated-frame [image]="frame" [result]="locateResponse()?.result ?? null" />
+      @if (locateResponse(); as r) {
+        <p class="answer">{{ r.result.answer }}</p>
+        @if (r.result.safetyWarning) {
+          <p class="warning">⚠ {{ r.result.safetyWarning }}</p>
+        }
+        @if (r.result.needsBetterView) {
+          <p class="warning">Model prosi o lepsze ujęcie.</p>
+        }
+        <dl class="facts">
+          <dt>Urządzenie</dt><dd>{{ r.result.deviceType }}</dd>
+          <dt>Akcja</dt><dd>{{ r.result.action }} · {{ r.result.target.label || '—' }}</dd>
+          <dt>Pewność</dt><dd>{{ r.result.confidence | percent }}</dd>
+          @if (r.result.extractedText.url) { <dt>Adres</dt><dd>{{ r.result.extractedText.url }}</dd> }
+          @if (r.result.extractedText.ssid) { <dt>SSID</dt><dd>{{ r.result.extractedText.ssid }}</dd> }
+          @if (r.result.extractedText.password) { <dt>Hasło</dt><dd>{{ r.result.extractedText.password }}</dd> }
+          @if (r.result.extractedText.other) { <dt>Inny tekst</dt><dd>{{ r.result.extractedText.other }}</dd> }
+        </dl>
+        <ng-container *ngTemplateOutlet="metrics; context: { $implicit: r }" />
+      }
+    </section>
+  }
+
+  @if (mode() === 'compare' && compareResponse(); as r) {
+    <section class="result">
+      <p class="answer" [class.ok]="r.result.stepCompleted" [class.not-ok]="!r.result.stepCompleted">
+        {{ r.result.stepCompleted ? '✔ Krok wykonany' : '✘ Krok jeszcze nie wykonany' }}
+      </p>
+      <p>{{ r.result.observedChange }}</p>
+      <dl class="facts">
+        <dt>Pewność</dt><dd>{{ r.result.confidence | percent }}</dd>
+      </dl>
+      <ng-container *ngTemplateOutlet="metrics; context: { $implicit: r }" />
+    </section>
+  }
+
+  @if (latencyStats(); as s) {
+    <section class="stats">
+      Czas odpowiedzi w tej sesji: n={{ s.count }}, p50={{ s.p50 / 1000 | number: '1.1-1' }} s,
+      p90={{ s.p90 / 1000 | number: '1.1-1' }} s
+    </section>
+  }
+</main>
+
+<ng-template #metrics let-r>
+  <p class="metrics">
+    {{ r.model }} · model {{ r.modelLatencyMs }} ms · razem {{ r.totalLatencyMs }} ms ·
+    tokeny {{ r.inputTokens }}/{{ r.outputTokens }} · obraz {{ r.imageWidth }}×{{ r.imageHeight }}
+  </p>
+  <details>
+    <summary>Surowa odpowiedź JSON</summary>
+    <pre>{{ r.result | json }}</pre>
+  </details>
+</ng-template>

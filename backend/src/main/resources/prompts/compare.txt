@@ -1,0 +1,6 @@
+Pierwszy obraz to stan PRZED, drugi to stan PO czynności użytkownika.
+
+Oczekiwany krok: „{{expectedStep}}”
+
+Oceń, czy na obrazie PO widać efekt wykonania tego kroku (np. otwarty nowy ekran, zaznaczona opcja, obrócone urządzenie, wpisany tekst).
+Jeśli obrazy pokazują coś zupełnie innego albo są nieczytelne, ustaw stepCompleted=false i niską pewność.
